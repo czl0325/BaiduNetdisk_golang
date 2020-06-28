@@ -1,0 +1,21 @@
+.upload-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.upload-container .input-upload {
+    width: 90%;
+    height: 2rem;
+}
+
+.upload-container .btn-upload {
+    margin-top: 0.5rem;
+    width: 90%;
+    height: 2rem;
+    background-color: cornflowerblue;
+    color: white;
+    line-height: 2rem;
+    text-align: center;
+}
