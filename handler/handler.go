@@ -85,3 +85,24 @@ func GetFileMetaHandle(w http.ResponseWriter, r *http.Request) {
 	data, _ := json.Marshal(res)
 	w.Write(data)
 }
+
+func UserSignUpHandle(w http.ResponseWriter, r *http.Request)  {
+	if r.Method == "GET" {
+		data, err := ioutil.ReadFile("./static/html/user_signup.html")
+		if err != nil {
+			println("user_signup.html读取失败!err=" + err.Error())
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+		w.Write(data)
+	} else {
+		r.ParseForm()
+
+		username := r.Form.Get("username")
+		password := r.Form.Get("password")
+
+		if username == "" || password == "" {
+			w.WriteHeader(http.Status)
+		}
+	}
+}

@@ -13,6 +13,7 @@ func main() {
 	http.HandleFunc("/file/upload",handler.UploadHandle)
 	http.HandleFunc("/file/upload/success", handler.UploadSuccessHandle)
 	http.HandleFunc("/file/get", handler.GetFileMetaHandle)
+	http.HandleFunc("/user/signup", handler.UserSignUpHandle)
 
 	err := http.ListenAndServe(":8080", nil)
 	if err != nil {
