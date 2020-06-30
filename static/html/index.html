@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <title>百度网盘</title>
+    <link rel="stylesheet" href="/static/css/index.css" type="text/css">
+    <link rel="stylesheet" type="text/css" href="/static/css/reset.css">
+
+</head>
+<body>
+    <div class="container">
+        <div class="user-info">
+            <img src="/static/images/default_head.png" class="header">
+            <p id="username" style="margin: 1em auto;"></p>
+            <span id="phone"></span>
+        </div>
+        <div class="table-content">
+            <table border="1" cellspacing="0" cellpadding="10" width="100%" align="center" rules="all">
+                <tr>
+                    <th>序号</th>
+                    <th>文件名</th>
+                    <th>文件hash</th>
+                    <th>文件路径</th>
+                    <th>上传时间</th>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="navbar">百度网盘</div>
+
+    <script src="/static/js/common/jquery-3.5.1.min.js"></script>
+    <script src="/static/js/common/template.js"></script>
+    <script src="/static/js/common/utils.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            let cookie = decodeQuery()
+            if (cookie["username"]) {
+                $("#username").html(cookie["username"])
+            } else {
+                $("#username").html("未登录")
+                $("#username").click(function () {
+                    window.location = "/user/login"
+                })
+            }
+            if (cookie["phone"]) {
+                $("#phone").html(cookie["phone"])
+            } else {
+                $("#phone").html("未设置手机号码")
+            }
+        })
+    </script>
+</body>
+</html>

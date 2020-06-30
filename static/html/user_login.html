@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <title>用户登录</title>
+    <link rel="stylesheet" href="/static/css/user_signup.css" type="text/css">
+    <link rel="stylesheet" type="text/css" href="/static/css/reset.css">
+</head>
+<body>
+<form method="post">
+    <div class="input-container">
+        <h2>用户登录</h2>
+        <div class="input-inner">
+            <label for="username">* 用户名:</label>
+            <input name="username" placeholder="请输入用户名">
+        </div>
+        <div class="input-inner">
+            <label for="password">* 密码:</label>
+            <input name="password" placeholder="请输入密码" type="password">
+        </div>
+        <input class="submit" type="submit">
+        <input type="button" id="register" value="还没有账号，点击注册" style="width: 100%;text-align: right;margin-top: 10px;color: orangered;font-size: 13px;background-color: transparent;border: none;" onclick="window.toRegister()">
+    </div>
+</form>
+
+<script type="text/javascript">
+    function toRegister(e) {
+        window.location = "/user/signup"
+    }
+    $(document).ready(function () {
+
+    })
+</script>
+</body>
+</html>

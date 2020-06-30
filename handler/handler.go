@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"strconv"
 )
 
 func UploadHandle(w http.ResponseWriter, r *http.Request) {
@@ -86,7 +87,40 @@ func GetFileMetaHandle(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
-func UserSignUpHandle(w http.ResponseWriter, r *http.Request)  {
+func UserLoginHandle(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "GET" {
+		data, err := ioutil.ReadFile("./static/html/user_login.html")
+		if err != nil {
+			println("user_login.html读取失败!err=" + err.Error())
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+		w.Write(data)
+	} else {
+		r.ParseForm()
+
+		username := r.Form.Get("username")
+		password := r.Form.Get("password")
+
+		if username == "" || password == "" {
+			http.Redirect(w, r, "/user/login", http.StatusFound)
+		}
+
+		user, err := meta.GetUserMetaDB(username, password)
+		if err != nil {
+			http.Redirect(w, r, "/user/login", http.StatusFound)
+		} else {
+			cookie := &http.Cookie{
+				Name:   "id",
+				Value:  strconv.FormatInt(user.Id,10),
+			}
+			http.SetCookie(w, cookie)
+			http.Redirect(w, r, "/", http.StatusFound)
+		}
+	}
+}
+
+func UserSignUpHandle(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		data, err := ioutil.ReadFile("./static/html/user_signup.html")
 		if err != nil {
@@ -102,7 +136,24 @@ func UserSignUpHandle(w http.ResponseWriter, r *http.Request)  {
 		password := r.Form.Get("password")
 
 		if username == "" || password == "" {
-			w.WriteHeader(http.Status)
+			http.Redirect(w, r, "/user/signup", http.StatusFound)
+		}
+
+		ret := db.OnSignUpHandle(username, password)
+		if ret == false {
+			http.Redirect(w, r, "/user/signup", http.StatusFound)
+		} else {
+			http.Redirect(w, r, "/", http.StatusFound)
 		}
 	}
+}
+
+func OnHomeHandle(w http.ResponseWriter, r *http.Request) {
+	data, err := ioutil.ReadFile("./static/html/index.html")
+	if err != nil {
+		println("index.html读取失败!err=" + err.Error())
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+	w.Write(data)
 }

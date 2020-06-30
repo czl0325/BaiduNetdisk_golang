@@ -32,6 +32,7 @@ type TableFile struct {
 	FileSize sql.NullInt64
 	FileAddr sql.NullString
 }
+
 func GetFileMeta(fileHash string) (*TableFile, error) {
 	stmt, err := mysql.DBConn().Prepare(
 		"select file_sha1, file_name, file_size, file_addr from tbl_file where file_sha1=? and status=1 limit 1")
@@ -41,7 +42,7 @@ func GetFileMeta(fileHash string) (*TableFile, error) {
 	}
 	defer stmt.Close()
 	tFile := TableFile{}
-	stmt.QueryRow(fileHash).Scan(&tFile.FileHash, &tFile.FileName, &tFile.FileSize, &tFile.FileAddr)
+	err = stmt.QueryRow(fileHash).Scan(&tFile.FileHash, &tFile.FileName, &tFile.FileSize, &tFile.FileAddr)
 	if err != nil {
 		println("查询文件语句执行失败2,err=" + err.Error())
 		return nil, err
