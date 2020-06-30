@@ -44,3 +44,22 @@ create table `tbl_user` (
     key `idx_status` (`status`)
 ) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4;
 ```
+
+* 用户与文件关联表
+
+```mysql
+create table `tbl_user_file` (
+    `id` int(11) NOT NULL Primary Key auto_increment,
+    `user_id` int(11) NOT NULL COMMENT '用户id',
+    `user_name` varchar(40) NOT NULL default '' COMMENT '用户名',
+    `file_sha1` varchar(64) NOT NULL default '' COMMENT '文件hash',
+    `file_size` bigint(20) default 0 COMMENT '文件大小',
+    `file_name` varchar(256) NOT NULL default '' COMMENT '文件名',
+    `file_path` varchar(512) NOT NULL default '' COMMENT '文件路径',
+    `create_time` datetime default NOW() COMMENT '创建日期',
+    `update_time` datetime default NOW() COMMENT '更新日期',
+    `status` tinyint default '1' COMMENT '状态(可用/禁用/已删除)',
+    `profile` text COMMENT '用户属性',
+    KEY `idx_user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+```

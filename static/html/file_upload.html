@@ -6,19 +6,23 @@
     <title>文件上传</title>
     <link rel="stylesheet" type="text/css" href="/static/css/file_upload.css">
     <link rel="stylesheet" type="text/css" href="/static/css/reset.css">
-    <script type="text/javascript" src="/static/js/common/jquery-3.5.1.min.js"></script>
+
 </head>
 <body>
 <form id="file-upload" enctype="multipart/form-data" method="post">
     <div class="upload-container">
+        <input hidden id="input-uid">
         <input type="file" name="file" required accept="*/*" autocomplete="off" id="input-upload" class="input-upload">
         <button type="submit" class="btn-upload">上传</button>
     </div>
 </form>
 
+<script type="text/javascript" src="/static/js/common/jquery-3.5.1.min.js"></script>
+<script src="/static/js/common/utils.js"></script>
 <script type="text/javascript">
     $(document).ready(function () {
-
+        let uid = getCookie("uid")
+        $("#input-uid").attr("name", uid)
     })
 </script>
 </body>
