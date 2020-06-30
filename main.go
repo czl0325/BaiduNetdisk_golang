@@ -12,14 +12,14 @@ func main() {
 	// 接口
 	http.HandleFunc("/", handler.OnHomeHandle)
 
-	http.HandleFunc("/file/upload",handler.UploadHandle)
+	http.HandleFunc("/file/upload", handler.UploadHandle)
 	http.HandleFunc("/file/upload/success", handler.UploadSuccessHandle)
 	http.HandleFunc("/file/get", handler.GetFileMetaHandle)
 
 	// 用户
 	http.HandleFunc("/user/signup", handler.UserSignUpHandle)
 	http.HandleFunc("/user/login", handler.UserLoginHandle)
-
+	http.HandleFunc("/user/get", handler.UserInfoHandle)
 
 	err := http.ListenAndServe(":8080", nil)
 	if err != nil {

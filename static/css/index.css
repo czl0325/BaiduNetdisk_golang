@@ -30,6 +30,12 @@
     overflow: scroll;
 }
 
+.btn_upload {
+    margin-bottom: 20px;
+    background-color: lightskyblue;
+    color: white;
+}
+
 .navbar {
     position: fixed;
     width: 100%;

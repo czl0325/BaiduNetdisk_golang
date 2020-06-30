@@ -10,7 +10,10 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"time"
 )
+
+const COOKIE_MAX_AGE = time.Hour * 24 / time.Second
 
 func UploadHandle(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
@@ -110,9 +113,13 @@ func UserLoginHandle(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			http.Redirect(w, r, "/user/login", http.StatusFound)
 		} else {
+			maxAge := int(COOKIE_MAX_AGE)
 			cookie := &http.Cookie{
-				Name:   "id",
-				Value:  strconv.FormatInt(user.Id,10),
+				Name:     "uid",
+				Value:    strconv.FormatInt(user.Id, 10),
+				Path:     "/",
+				HttpOnly: false,
+				MaxAge:   maxAge,
 			}
 			http.SetCookie(w, cookie)
 			http.Redirect(w, r, "/", http.StatusFound)
@@ -146,6 +153,37 @@ func UserSignUpHandle(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, "/", http.StatusFound)
 		}
 	}
+}
+
+func UserInfoHandle(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+
+	res := db.BaseResponse{
+		Code:    0,
+		Message: "成功",
+		Data:    nil,
+	}
+
+	defer func() {
+		w.Header().Set("content-type","text/json")
+		data, _ := json.Marshal(res)
+		w.Write(data)
+	}()
+
+	id := r.Form.Get("id")
+	if id == "" {
+		res.Code = 500
+		res.Message = "缺少必要参数"
+		return
+	}
+	id2, _ := strconv.ParseInt(id, 10, 64)
+	user, err := meta.GetUserMetaByIdDB(id2)
+	if err != nil {
+		res.Code = 500
+		res.Message = err.Error()
+		return
+	}
+	res.Data = user
 }
 
 func OnHomeHandle(w http.ResponseWriter, r *http.Request) {

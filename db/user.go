@@ -61,3 +61,19 @@ func OnSignUpHandle(username, password string) bool {
 	return false
 }
 
+func OnGetUserHandle(id int64) (*TableUser, error) {
+	stmt, err := mysql.DBConn().Prepare("select id, user_name, phone from tbl_user where id=? and status=1 limit 1")
+	if err != nil {
+		println("获取用户语句执行失败1,err="+err.Error())
+		return nil, err
+	}
+	defer stmt.Close()
+	tableUser := TableUser{}
+	err = stmt.QueryRow(id).Scan(&tableUser.Id, &tableUser.UserName, &tableUser.Phone)
+	if err != nil {
+		println("获取用户语句执行失败2,err="+err.Error())
+		return nil, err
+	}
+	return &tableUser, nil
+}
+

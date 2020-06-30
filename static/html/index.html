@@ -6,7 +6,6 @@
     <title>百度网盘</title>
     <link rel="stylesheet" href="/static/css/index.css" type="text/css">
     <link rel="stylesheet" type="text/css" href="/static/css/reset.css">
-
 </head>
 <body>
     <div class="container">
@@ -16,6 +15,8 @@
             <span id="phone"></span>
         </div>
         <div class="table-content">
+            <button class="btn_upload" onclick="javascript:onUpload()">上传文件</button>
+
             <table border="1" cellspacing="0" cellpadding="10" width="100%" align="center" rules="all">
                 <tr>
                     <th>序号</th>
@@ -33,19 +34,27 @@
     <script src="/static/js/common/template.js"></script>
     <script src="/static/js/common/utils.js"></script>
     <script type="text/javascript">
+        function onUpload() {
+            let uid = getCookie("uid")
+            if (!uid) {
+                window.location = "/user/login"
+            } else {
+                window.location = "/file/upload"
+            }
+        }
         $(document).ready(function () {
-            let cookie = decodeQuery()
-            if (cookie["username"]) {
-                $("#username").html(cookie["username"])
+            let uid = getCookie("uid")
+            if (uid) {
+                $.get("/user/get?id=" + uid, function (res) {
+                    let user = res.data
+                    $("#username").html(user.username)
+                    $("#phone").html(user.phone || "未设置电话号码")
+                })
             } else {
                 $("#username").html("未登录")
                 $("#username").click(function () {
                     window.location = "/user/login"
                 })
-            }
-            if (cookie["phone"]) {
-                $("#phone").html(cookie["phone"])
-            } else {
                 $("#phone").html("未设置手机号码")
             }
         })
