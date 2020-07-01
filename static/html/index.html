@@ -50,6 +50,9 @@
                     $("#username").html(user.username)
                     $("#phone").html(user.phone || "未设置电话号码")
                 })
+                $.get("/user/files?uid=" + uid, function (res) {
+                    console.log(res)
+                })
             } else {
                 $("#username").html("未登录")
                 $("#username").click(function () {

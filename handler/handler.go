@@ -217,3 +217,39 @@ func OnHomeHandle(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Write(data)
 }
+
+func FileQueryHandle(w http.ResponseWriter, r *http.Request)  {
+	r.ParseForm()
+
+	res := db.BaseResponse{
+		Code:    0,
+		Message: "成功",
+		Data:    nil,
+	}
+
+	defer func() {
+		w.Header().Set("content-type","text/json")
+		data, _ := json.Marshal(res)
+		w.Write(data)
+	}()
+
+	limit, err := strconv.ParseInt(r.Form.Get("limit"), 10, 64)
+	if err != nil {
+		limit = 20
+	}
+	uid, err := strconv.ParseInt(r.Form.Get("uid"), 10, 64)
+	if err != nil {
+		println("获取uid失败,err="+err.Error())
+		res.Code = 500
+		res.Message = "获取uid失败,err="+err.Error()
+		return
+	}
+	userFiles, err := db.QueryUserFileMetas(uid, limit)
+	if err != nil {
+		println("查询用户文件失败,err="+err.Error())
+		res.Code = 500
+		res.Message = "查询用户文件失败,err="+err.Error()
+		return
+	}
+	res.Data = userFiles
+}

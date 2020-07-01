@@ -20,6 +20,7 @@ func main() {
 	http.HandleFunc("/user/signup", handler.UserSignUpHandle)
 	http.HandleFunc("/user/login", handler.UserLoginHandle)
 	http.HandleFunc("/user/get", handler.UserInfoHandle)
+	http.HandleFunc("/user/files", handler.FileQueryHandle)
 
 	err := http.ListenAndServe(":8080", nil)
 	if err != nil {

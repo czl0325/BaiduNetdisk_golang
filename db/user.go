@@ -77,3 +77,4 @@ func OnGetUserHandle(id int64) (*TableUser, error) {
 	return &tableUser, nil
 }
 
+
