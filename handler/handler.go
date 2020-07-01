@@ -25,17 +25,16 @@ func UploadHandle(w http.ResponseWriter, r *http.Request) {
 		}
 		w.Write(data)
 	} else {
-		r.ParseForm()
-		uid := r.Form.Get("uid")
-		if uid == "" {
+		uid, _ := r.Cookie("uid")
+		println("打印=%v", uid)
+		if uid == nil {
 			println("注册用户才能上传文件")
 			w.WriteHeader(http.StatusInternalServerError)
 			http.Redirect(w, r, "/file/upload", http.StatusFound)
 			return
 		}
 
-
-		uid2, _ := strconv.ParseInt(uid, 10, 64)
+		uid2, _ := strconv.ParseInt(uid.Value, 10, 64)
 		user, err := meta.GetUserMetaByIdDB(uid2)
 		if err != nil {
 			println("上传文件uid错误，无此用户")
