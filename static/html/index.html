@@ -8,59 +8,78 @@
     <link rel="stylesheet" type="text/css" href="/static/css/reset.css">
 </head>
 <body>
-    <div class="container">
-        <div class="user-info">
-            <img src="/static/images/default_head.png" class="header">
-            <p id="username" style="margin: 1em auto;"></p>
-            <span id="phone"></span>
-        </div>
-        <div class="table-content">
-            <button class="btn_upload" onclick="javascript:onUpload()">上传文件</button>
-
-            <table border="1" cellspacing="0" cellpadding="10" width="100%" align="center" rules="all">
-                <tr>
-                    <th>序号</th>
-                    <th>文件名</th>
-                    <th>文件hash</th>
-                    <th>文件路径</th>
-                    <th>上传时间</th>
-                </tr>
-            </table>
-        </div>
+<div class="container">
+    <div class="user-info">
+        <img src="/static/images/default_head.png" class="header">
+        <p id="username" style="margin: 1em auto;"></p>
+        <span id="phone"></span>
     </div>
-    <div class="navbar">百度网盘</div>
+    <div class="table-content">
+        <button class="btn_upload" onclick="javascript:onUpload()">上传文件</button>
 
-    <script src="/static/js/common/jquery-3.5.1.min.js"></script>
-    <script src="/static/js/common/template.js"></script>
-    <script src="/static/js/common/utils.js"></script>
-    <script type="text/javascript">
-        function onUpload() {
-            let uid = getCookie("uid")
-            if (!uid) {
-                window.location = "/user/login"
-            } else {
-                window.location = "/file/upload"
-            }
+        <table id="tbl-files" border="1" cellspacing="0" cellpadding="10" width="100%" align="center" rules="all">
+            <thead>
+            <tr>
+                <th>序号</th>
+                <th>文件名</th>
+                <th>文件hash</th>
+                <th>文件路径</th>
+                <th>上传时间</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="navbar">百度网盘</div>
+
+<script src="/static/js/common/jquery-3.5.1.min.js"></script>
+<script src="/static/js/common/template.js"></script>
+<script src="/static/js/common/utils.js"></script>
+<script type="text/javascript">
+    function onUpload() {
+        let uid = getCookie("uid")
+        if (!uid) {
+            window.location = "/user/login"
+        } else {
+            window.location = "/file/upload"
         }
-        $(document).ready(function () {
-            let uid = getCookie("uid")
-            if (uid) {
-                $.get("/user/get?id=" + uid, function (res) {
-                    let user = res.data
-                    $("#username").html(user.username)
-                    $("#phone").html(user.phone || "未设置电话号码")
-                })
-                $.get("/user/files?uid=" + uid, function (res) {
-                    console.log(res)
-                })
-            } else {
-                $("#username").html("未登录")
-                $("#username").click(function () {
-                    window.location = "/user/login"
-                })
-                $("#phone").html("未设置手机号码")
-            }
-        })
-    </script>
+    }
+
+    $(document).ready(function () {
+        let uid = getCookie("uid")
+        if (uid) {
+            $.get("/user/get?id=" + uid, function (res) {
+                let user = res.data
+                $("#username").html(user.username)
+                $("#phone").html(user.phone || "未设置电话号码")
+            })
+            $.get("/user/files?uid=" + uid, function (res) {
+                let str = ""
+                for (let i=0; i<res.data.length; i++) {
+                    let file = res.data[i]
+                    str += `
+                    <tr>
+                        <td>${i+1}</td>
+                        <td>${file.fileName}</td>
+                        <td>${file.fileSha1}</td>
+                        <td>${file.filePath}</td>
+                        <td>${file.createTime}</td>
+                    </tr>`
+                }
+                //$("#tbl-files  tr:not(:first)").empty().append(str);
+                $("#tbl-files tbody").html(str);
+            })
+        } else {
+            $("#username").html("未登录")
+            $("#username").click(function () {
+                window.location = "/user/login"
+            })
+            $("#phone").html("未设置手机号码")
+        }
+    })
+</script>
 </body>
 </html>

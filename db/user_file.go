@@ -3,15 +3,15 @@ package db
 import "BaiduNetdisk_golang/db/mysql"
 
 type UserFile struct {
-	Id         int64
-	UserId     int64
-	UserName   string
-	FileSha1   string
-	FileName   string
-	FileSize   int64
-	FilePath   string
-	CreateTime string
-	UpdateTime string
+	Id         int64  `json:"code"`
+	UserId     int64  `json:"uid"`
+	UserName   string `json:"userName"`
+	FileSha1   string `json:"fileSha1"`
+	FileName   string `json:"fileName"`
+	FileSize   int64  `json:"fileSize"`
+	FilePath   string `json:"filePath"`
+	CreateTime string `json:"createTime"`
+	UpdateTime string `json:"updateTime"`
 }
 
 //OnUserFileUploadFinished:插入用户文件表
@@ -29,13 +29,13 @@ func OnUserFileUploadFinished(uid int64, username, filesha1, filename, filepath 
 	return true
 }
 
-func QueryUserFileMetas(uid, limit int64) ([]UserFile, error) {
-	stmt, err := mysql.DBConn().Prepare("select id, user_id, user_name, file_sha1, file_size, file_name, file_path, create_time from tbl_user_file where user_id=? limit ?")
+func QueryUserFileMetas(uid int64) ([]UserFile, error) {
+	stmt, err := mysql.DBConn().Prepare("select id, user_id, user_name, file_sha1, file_size, file_name, file_path, create_time from tbl_user_file where user_id=?")
 	if err != nil {
 		return nil, err
 	}
 	defer stmt.Close()
-	rows, err := stmt.Query(uid, limit)
+	rows, err := stmt.Query(uid)
 	if err != nil {
 		return nil, err
 	}

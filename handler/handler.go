@@ -232,11 +232,7 @@ func FileQueryHandle(w http.ResponseWriter, r *http.Request)  {
 		data, _ := json.Marshal(res)
 		w.Write(data)
 	}()
-
-	limit, err := strconv.ParseInt(r.Form.Get("limit"), 10, 64)
-	if err != nil {
-		limit = 20
-	}
+	
 	uid, err := strconv.ParseInt(r.Form.Get("uid"), 10, 64)
 	if err != nil {
 		println("获取uid失败,err="+err.Error())
@@ -244,7 +240,7 @@ func FileQueryHandle(w http.ResponseWriter, r *http.Request)  {
 		res.Message = "获取uid失败,err="+err.Error()
 		return
 	}
-	userFiles, err := db.QueryUserFileMetas(uid, limit)
+	userFiles, err := db.QueryUserFileMetas(uid)
 	if err != nil {
 		println("查询用户文件失败,err="+err.Error())
 		res.Code = 500
