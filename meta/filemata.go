@@ -15,10 +15,10 @@ func UpdateFileMetaDB(meta FileMeta) bool {
 }
 
 //GetFileMetaDB:从mysql获取文件元信息
-func GetFileMetaDB(fileHash string) (FileMeta, error) {
+func GetFileMetaDB(fileHash string) (*FileMeta, error) {
 	tFile, err := db.GetFileMeta(fileHash)
 	if err != nil {
-		return FileMeta{}, err
+		return nil, err
 	}
 	fMeta := FileMeta{
 		FileSha1: tFile.FileHash,
@@ -26,5 +26,5 @@ func GetFileMetaDB(fileHash string) (FileMeta, error) {
 		FileSize: tFile.FileSize.Int64,
 		Location: tFile.FileAddr.String,
 	}
-	return fMeta, nil
+	return &fMeta, nil
 }

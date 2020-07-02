@@ -15,6 +15,7 @@ import (
 
 const COOKIE_MAX_AGE = time.Hour * 24 / time.Second
 
+// 上传文件接口
 func UploadHandle(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		data, err := ioutil.ReadFile("./static/html/file_upload.html")
@@ -26,7 +27,6 @@ func UploadHandle(w http.ResponseWriter, r *http.Request) {
 		w.Write(data)
 	} else {
 		uid, _ := r.Cookie("uid")
-		println("打印=%v", uid)
 		if uid == nil {
 			println("注册用户才能上传文件")
 			w.WriteHeader(http.StatusInternalServerError)
@@ -48,6 +48,9 @@ func UploadHandle(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
+
+
+
 		defer file.Close()
 
 		path := "./temp/" + header.Filename
@@ -112,6 +115,7 @@ func GetFileMetaHandle(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
+// 用户登录
 func UserLoginHandle(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		data, err := ioutil.ReadFile("./static/html/user_login.html")
@@ -149,6 +153,7 @@ func UserLoginHandle(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// 用户注册
 func UserSignUpHandle(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		data, err := ioutil.ReadFile("./static/html/user_signup.html")
@@ -232,7 +237,7 @@ func FileQueryHandle(w http.ResponseWriter, r *http.Request)  {
 		data, _ := json.Marshal(res)
 		w.Write(data)
 	}()
-	
+
 	uid, err := strconv.ParseInt(r.Form.Get("uid"), 10, 64)
 	if err != nil {
 		println("获取uid失败,err="+err.Error())
@@ -248,4 +253,61 @@ func FileQueryHandle(w http.ResponseWriter, r *http.Request)  {
 		return
 	}
 	res.Data = userFiles
+}
+
+// 尝试文件秒传接口
+func TryFastUploadHandle(w http.ResponseWriter, r *http.Request) {
+	// 1.解析请求参数
+	uid, _ := r.Cookie("uid")
+	if uid == nil {
+		println("注册用户才能上传文件")
+		w.WriteHeader(http.StatusInternalServerError)
+		http.Redirect(w, r, "/file/upload", http.StatusFound)
+		return
+	}
+
+	uid2, _ := strconv.ParseInt(uid.Value, 10, 64)
+	user, err := meta.GetUserMetaByIdDB(uid2)
+	if err != nil {
+		println("上传文件uid错误，无此用户")
+		http.Redirect(w, r, "/file/upload", http.StatusFound)
+		return
+	}
+
+	r.ParseForm()
+
+	fileSha1 := r.Form.Get("hash")
+	res := db.BaseResponse{
+		Code:    0,
+		Message: "成功",
+		Data:    nil,
+	}
+
+	defer func() {
+		w.Header().Set("content-type","text/json")
+		data, _ := json.Marshal(res)
+		w.Write(data)
+	}()
+
+	// 2.从文件表中查询相同hash的文件记录
+	fileMeta, err := meta.GetFileMetaDB(fileSha1)
+	if err != nil {
+		println("查询错误,err="+err.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	// 3.查不到记录则返回秒传失败
+	if fileMeta == nil {
+		res.Code = 501
+		res.Message = "没有存在相同文件"
+		return
+	}
+
+	// 4.上传过则将文件信息写入用户文件表，返回成功
+	ret := db.OnUserFileUploadFinished(user.Id, user.UserName, fileMeta.FileSha1, fileMeta.FileName, fileMeta.Location, fileMeta.FileSize)
+	if ret == false {
+		res.Code = 501
+		res.Message = "写入用户文件表失败"
+	}
 }

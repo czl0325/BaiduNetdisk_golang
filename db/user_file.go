@@ -1,6 +1,8 @@
 package db
 
-import "BaiduNetdisk_golang/db/mysql"
+import (
+	"BaiduNetdisk_golang/db/mysql"
+)
 
 type UserFile struct {
 	Id         int64  `json:"code"`
@@ -15,13 +17,13 @@ type UserFile struct {
 }
 
 //OnUserFileUploadFinished:插入用户文件表
-func OnUserFileUploadFinished(uid int64, username, filesha1, filename, filepath string, filesize int64) bool {
+func OnUserFileUploadFinished(uid int64, userName, fileSha1, fileName, filePath string, fileSize int64) bool {
 	stmt, err := mysql.DBConn().Prepare("insert ignore into tbl_user_file (`user_id`, `user_name`, `file_sha1`, `file_name`, `file_size`, `file_path`) values (?,?,?,?,?,?)")
 	if err != nil {
 		println("插入用户文件表失败1,err=" + err.Error())
 		return false
 	}
-	_, err = stmt.Exec(uid, username, filesha1, filename, filesha1, filepath)
+	_, err = stmt.Exec(uid, userName, fileSha1, fileName, fileSize, filePath)
 	if err != nil {
 		println("插入用户文件表失败2,err=" + err.Error())
 		return false
@@ -51,3 +53,4 @@ func QueryUserFileMetas(uid int64) ([]UserFile, error) {
 	}
 	return userFiles, nil
 }
+

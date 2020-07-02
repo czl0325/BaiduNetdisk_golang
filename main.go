@@ -15,6 +15,7 @@ func main() {
 	http.HandleFunc("/file/upload", handler.UploadHandle)
 	http.HandleFunc("/file/upload/success", handler.UploadSuccessHandle)
 	http.HandleFunc("/file/get", handler.GetFileMetaHandle)
+	http.HandleFunc("/file/fastUpload", handler.TryFastUploadHandle)
 
 	// 用户
 	http.HandleFunc("/user/signup", handler.UserSignUpHandle)
