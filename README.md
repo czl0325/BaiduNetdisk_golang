@@ -2,6 +2,7 @@
 采用golang从0开始打造百度网盘服务端，包含文件上传下载，不同用户文件隔离，文件的秒传，断点续传，分块上传，离线下载，分布式云存储。
 
 
+
 ### mysql数据库
 
 * 文件表
@@ -62,4 +63,15 @@ create table `tbl_user_file` (
     `profile` text COMMENT '用户属性',
     KEY `idx_user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+```
+
+
+
+### go get 被墙解决方法
+
+```
+## 使用百度的代理，仅支持go module的项目
+go env -w GONOPROXY=\*\*.baidu.com\*\*              ## 配置GONOPROXY环境变量,所有百度内代码,不走代理
+go env -w GONOSUMDB=\*                              ## 配置GONOSUMDB,暂不支持sumdb索引
+go env -w GOPROXY=https://goproxy.baidu.com         ## 配置GOPROXY,可以下载墙外代码
 ```

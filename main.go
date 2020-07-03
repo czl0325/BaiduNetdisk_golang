@@ -23,6 +23,11 @@ func main() {
 	http.HandleFunc("/user/get", handler.UserInfoHandle)
 	http.HandleFunc("/user/files", handler.FileQueryHandle)
 
+	// 分块上传接口
+	http.HandleFunc("/file/mpupload/init", handler.InitialMultipartUploadHandle)
+	http.HandleFunc("/file/mpupload/uppart", handler.UploadPartHandle)
+	http.HandleFunc("/file/mpupload/complete", handler.CompleteUploadHandle)
+
 	err := http.ListenAndServe(":8080", nil)
 	if err != nil {
 		println("服务器启动失败!err=" + err.Error())

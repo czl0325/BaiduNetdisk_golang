@@ -1,7 +1,6 @@
 package util
 
 import (
-	"BaiduNetdisk_golang/db"
 	"crypto/md5"
 	"crypto/sha1"
 	"encoding/hex"
@@ -68,12 +67,4 @@ func GetFileSize(filename string) int64 {
 		return nil
 	})
 	return result
-}
-
-func NewResponseData(code int, msg string, data interface{}) db.BaseResponse {
-	return db.BaseResponse{
-		Code:    code,
-		Message: msg,
-		Data:    data,
-	}
 }
